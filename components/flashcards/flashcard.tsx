@@ -47,9 +47,7 @@ export function Flashcard({
           </span>
         </div>
         <div className={cn(face, "[transform:rotateY(180deg)] border-primary/30 bg-accent/40")} aria-hidden={!revealed}>
-          <span className="text-xs font-medium tracking-wide text-muted-foreground uppercase">
-            {card.prompt}
-          </span>
+          <span className="font-mono text-sm font-medium text-muted-foreground">{card.prompt}</span>
           <span className="text-4xl font-semibold sm:text-5xl" data-testid="card-answer">
             {card.answer}
           </span>

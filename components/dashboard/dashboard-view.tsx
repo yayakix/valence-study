@@ -102,8 +102,9 @@ export function DashboardView() {
                 <Shuffle className="size-4 text-primary" /> Cumulative review
               </CardTitle>
               <CardDescription>
-                A mixed deck from all {data.progress.unlockedSectionIds.length} unlocked section
-                {data.progress.unlockedSectionIds.length === 1 ? "" : "s"}, weakest cards first.
+                {data.progress.unlockedSectionIds.length === 1
+                  ? "A mixed deck from your unlocked section, weakest cards first. It grows as you unlock more."
+                  : `A mixed deck from all ${data.progress.unlockedSectionIds.length} unlocked sections, weakest cards first.`}
               </CardDescription>
             </CardHeader>
             <CardContent>
