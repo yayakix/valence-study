@@ -110,14 +110,26 @@ describe("normalizeProgress", () => {
 
 describe("settings codec", () => {
   it("round-trips settings", () => {
-    const settings = { sessionSize: 30, cardKinds: ["number-to-element" as const] };
+    const settings = { sessionSize: 30, cardKinds: ["number-to-element" as const], drillMaxNumber: 36 };
     expect(decodeSettings(encodeSettings(settings))).toEqual(settings);
+  });
+
+  it("loads settings saved before the drill limit existed", () => {
+    const saved = JSON.stringify({ schemaVersion: 1, data: { sessionSize: 20, cardKinds: ["symbol-to-name"] } });
+    expect(decodeSettings(saved).drillMaxNumber).toBe(118);
+  });
+
+  it("clamps the drill limit", () => {
+    const saved = (n: number) => JSON.stringify({ schemaVersion: 1, data: { ...DEFAULT_SETTINGS, drillMaxNumber: n } });
+    expect(decodeSettings(saved(500)).drillMaxNumber).toBe(118);
+    expect(decodeSettings(saved(0)).drillMaxNumber).toBe(2);
   });
 
   it("repairs invalid fields instead of failing", () => {
     expect(decodeSettings(JSON.stringify({ schemaVersion: 1, data: { sessionSize: 500, cardKinds: ["bogus"] } }))).toEqual({
       sessionSize: 50,
       cardKinds: DEFAULT_SETTINGS.cardKinds,
+      drillMaxNumber: 118,
     });
     expect(decodeSettings(JSON.stringify("garbage"))).toEqual(DEFAULT_SETTINGS);
   });
@@ -126,7 +138,7 @@ describe("settings codec", () => {
 describe("import and export", () => {
   it("exports a bundle that imports back identically", () => {
     const progress = sampleProgress();
-    const settings = { sessionSize: 10, cardKinds: ["symbol-to-name" as const] };
+    const settings = { sessionSize: 10, cardKinds: ["symbol-to-name" as const], drillMaxNumber: 118 };
     const imported = parseImport(createExportBundle(progress, settings, T0));
     expect(imported).toEqual({ progress, settings, migratedFrom: null });
   });

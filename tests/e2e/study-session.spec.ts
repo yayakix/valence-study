@@ -116,4 +116,25 @@ test.describe("blank table", () => {
     await page.getByRole("tab", { name: "Number" }).click();
     await expect(page.getByTestId("drill-position")).toHaveText("2 of 118");
   });
+
+  test("number mode can be limited to a maximum atomic number, and remembers it", async ({ page }) => {
+    await page.goto("/blank-table");
+    await page.getByRole("tab", { name: "Number" }).click();
+    const limit = page.getByLabel("Highest atomic number to practice");
+    await limit.fill("12");
+    await limit.press("Enter");
+    await expect(page.getByTestId("drill-position")).toHaveText("1 of 12");
+
+    for (let i = 0; i < 12; i++) {
+      expect(Number(await page.getByTestId("drill-number").textContent())).toBeLessThanOrEqual(12);
+      await page.getByRole("button", { name: "Reveal" }).click();
+      await page.getByRole("button", { name: "Next number" }).click();
+    }
+    await expect(page.getByTestId("drill-position")).toHaveText("1 of 12 · round 2");
+
+    await page.reload();
+    await page.getByRole("tab", { name: "Number" }).click();
+    await expect(limit).toHaveValue("12");
+    await expect(page.getByTestId("drill-position")).toHaveText("1 of 12");
+  });
 });

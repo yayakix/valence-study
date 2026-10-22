@@ -10,7 +10,7 @@ import {
   type StudySession,
   type StudySettings,
 } from "@/domain/study/types";
-import { SESSION_SIZE_LIMITS } from "@/domain/study/settings.service";
+import { DRILL_MAX_LIMITS, SESSION_SIZE_LIMITS } from "@/domain/study/settings.service";
 
 export const CURRENT_PROGRESS_VERSION = 2;
 export const CURRENT_SETTINGS_VERSION = 1;
@@ -123,6 +123,7 @@ export const versionProbeSchema = z.looseObject({ schemaVersion: z.number().int(
 export const settingsSchema: z.ZodType<StudySettings> = z.object({
   sessionSize: z.number().int().min(SESSION_SIZE_LIMITS.min).max(SESSION_SIZE_LIMITS.max),
   cardKinds: z.array(z.enum(CARD_KINDS)).min(1),
+  drillMaxNumber: z.number().int().min(DRILL_MAX_LIMITS.min).max(DRILL_MAX_LIMITS.max).default(DRILL_MAX_LIMITS.max),
 });
 
 export const settingsEnvelopeSchema = z.object({
