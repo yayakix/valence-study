@@ -117,24 +117,31 @@ test.describe("blank table", () => {
     await expect(page.getByTestId("drill-position")).toHaveText("2 of 118");
   });
 
-  test("number mode can be limited to a maximum atomic number, and remembers it", async ({ page }) => {
+  test("number mode can be limited to a range of atomic numbers, and remembers it", async ({ page }) => {
     await page.goto("/blank-table");
     await page.getByRole("tab", { name: "Number" }).click();
-    const limit = page.getByLabel("Highest atomic number to practice");
-    await limit.fill("12");
-    await limit.press("Enter");
-    await expect(page.getByTestId("drill-position")).toHaveText("1 of 12");
+    const from = page.getByLabel("Lowest atomic number to practice");
+    const to = page.getByLabel("Highest atomic number to practice");
+    await from.fill("10");
+    await to.fill("15");
+    await to.press("Enter");
+    await expect(page.getByTestId("drill-position")).toHaveText("1 of 6");
 
-    for (let i = 0; i < 12; i++) {
-      expect(Number(await page.getByTestId("drill-number").textContent())).toBeLessThanOrEqual(12);
+    const seen = new Set<number>();
+    for (let i = 0; i < 6; i++) {
+      seen.add(Number(await page.getByTestId("drill-number").textContent()));
       await page.getByRole("button", { name: "Reveal" }).click();
       await page.getByRole("button", { name: "Next number" }).click();
     }
-    await expect(page.getByTestId("drill-position")).toHaveText("1 of 12 · round 2");
+    expect([...seen].sort((a, b) => a - b)).toEqual([10, 11, 12, 13, 14, 15]);
+    await expect(page.getByTestId("drill-position")).toHaveText("1 of 6 · round 2");
 
     await page.reload();
     await page.getByRole("tab", { name: "Number" }).click();
-    await expect(limit).toHaveValue("12");
-    await expect(page.getByTestId("drill-position")).toHaveText("1 of 12");
+    await expect(from).toHaveValue("10");
+    await expect(to).toHaveValue("15");
+
+    await page.getByRole("button", { name: "1–10" }).click();
+    await expect(page.getByTestId("drill-position")).toHaveText("1 of 10");
   });
 });

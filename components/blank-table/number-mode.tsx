@@ -6,12 +6,12 @@ import { CATEGORY_STYLES } from "@/components/periodic-table/category-styles";
 import { Button } from "@/components/ui/button";
 import { getCategory } from "@/data";
 import { formatAtomicMass } from "@/domain/elements/queries";
-import { DRILL_MAX_LIMITS } from "@/domain/study/settings.service";
+import { DRILL_RANGE_LIMITS, normalizeDrillRange } from "@/domain/study/settings.service";
 import type { useNumberDrill } from "@/hooks/useNumberDrill";
 import { cn } from "@/lib/utils";
 
 export function NumberMode({
-  drill: { drill, element, max, setMax, reveal, next },
+  drill: { drill, element, min, max, setRange, reveal, next },
 }: {
   drill: ReturnType<typeof useNumberDrill>;
 }) {
@@ -33,7 +33,7 @@ export function NumberMode({
 
   return (
     <div className="mx-auto flex max-w-md flex-col gap-4">
-      <RangePicker key={max} max={max} onChange={setMax} />
+      <RangePicker min={min} max={max} onChange={setRange} />
       <div className="text-center text-xs text-muted-foreground tabular-nums" data-testid="drill-position">
         {drill.index + 1} of {drill.deck.length}
         {drill.round > 1 && ` · round ${drill.round}`}
@@ -85,54 +85,78 @@ export function NumberMode({
   );
 }
 
-const PRESETS = [10, 20, 36, 54, 118] as const;
+const PRESETS = [
+  { label: "1–10", from: 1, to: 10 },
+  { label: "1–20", from: 1, to: 20 },
+  { label: "1–36", from: 1, to: 36 },
+  { label: "All", from: DRILL_RANGE_LIMITS.lowest, to: DRILL_RANGE_LIMITS.highest },
+] as const;
 
-function RangePicker({ max, onChange }: { max: number; onChange: (value: number) => void }) {
-  const [draft, setDraft] = useState(String(max));
+function RangePicker({
+  min,
+  max,
+  onChange,
+}: {
+  min: number;
+  max: number;
+  onChange: (from: number, to: number) => void;
+}) {
+  const [draft, setDraft] = useState({ from: String(min), to: String(max) });
+
+  const apply = (from: number, to: number) => {
+    const range = normalizeDrillRange(from, to);
+    setDraft({ from: String(range.drillMinNumber), to: String(range.drillMaxNumber) });
+    if (range.drillMinNumber !== min || range.drillMaxNumber !== max) onChange(from, to);
+  };
 
   const commit = () => {
-    const value = Number(draft);
-    if (!Number.isInteger(value) || value === max) {
-      setDraft(String(max));
-      return;
-    }
-    const clamped = Math.min(DRILL_MAX_LIMITS.max, Math.max(DRILL_MAX_LIMITS.min, value));
-    setDraft(String(clamped));
-    onChange(clamped);
+    const from = Number(draft.from);
+    const to = Number(draft.to);
+    if (!Number.isInteger(from) || !Number.isInteger(to)) setDraft({ from: String(min), to: String(max) });
+    else apply(from, to);
   };
+
+  const numberInput = (field: "from" | "to", label: string) => (
+    <input
+      type="number"
+      inputMode="numeric"
+      min={DRILL_RANGE_LIMITS.lowest}
+      max={DRILL_RANGE_LIMITS.highest}
+      value={draft[field]}
+      onChange={(e) => setDraft((d) => ({ ...d, [field]: e.target.value }))}
+      onBlur={commit}
+      onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
+      aria-label={label}
+      className="h-8 w-16 rounded-md border bg-background px-2 text-center font-medium tabular-nums focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+    />
+  );
 
   return (
     <div className="flex flex-wrap items-center justify-center gap-2 text-sm">
-      <label className="flex items-center gap-2">
-        <span className="text-muted-foreground">Numbers 1 to</span>
-        <input
-          type="number"
-          inputMode="numeric"
-          min={DRILL_MAX_LIMITS.min}
-          max={DRILL_MAX_LIMITS.max}
-          value={draft}
-          onChange={(e) => setDraft(e.target.value)}
-          onBlur={commit}
-          onKeyDown={(e) => e.key === "Enter" && e.currentTarget.blur()}
-          aria-label="Highest atomic number to practice"
-          className="h-8 w-16 rounded-md border bg-background px-2 text-center font-medium tabular-nums focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
-        />
-      </label>
+      <div className="flex items-center gap-2">
+        <span className="text-muted-foreground">Numbers</span>
+        {numberInput("from", "Lowest atomic number to practice")}
+        <span className="text-muted-foreground">to</span>
+        {numberInput("to", "Highest atomic number to practice")}
+      </div>
       <div className="flex gap-1">
-        {PRESETS.map((preset) => (
-          <button
-            key={preset}
-            type="button"
-            aria-pressed={max === preset}
-            onClick={() => preset !== max && onChange(preset)}
-            className={cn(
-              "h-8 rounded-md border px-2 text-xs tabular-nums transition-colors hover:bg-muted",
-              max === preset && "border-primary bg-accent font-medium",
-            )}
-          >
-            {preset}
-          </button>
-        ))}
+        {PRESETS.map((preset) => {
+          const active = preset.from === min && preset.to === max;
+          return (
+            <button
+              key={preset.label}
+              type="button"
+              aria-pressed={active}
+              onClick={() => apply(preset.from, preset.to)}
+              className={cn(
+                "h-8 rounded-md border px-2 text-xs tabular-nums transition-colors hover:bg-muted",
+                active && "border-primary bg-accent font-medium",
+              )}
+            >
+              {preset.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );

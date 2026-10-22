@@ -110,25 +110,36 @@ describe("normalizeProgress", () => {
 
 describe("settings codec", () => {
   it("round-trips settings", () => {
-    const settings = { sessionSize: 30, cardKinds: ["number-to-element" as const], drillMaxNumber: 36 };
+    const settings = { sessionSize: 30, cardKinds: ["number-to-element" as const], drillMinNumber: 10, drillMaxNumber: 36 };
     expect(decodeSettings(encodeSettings(settings))).toEqual(settings);
   });
 
   it("loads settings saved before the drill limit existed", () => {
     const saved = JSON.stringify({ schemaVersion: 1, data: { sessionSize: 20, cardKinds: ["symbol-to-name"] } });
-    expect(decodeSettings(saved).drillMaxNumber).toBe(118);
+    expect(decodeSettings(saved)).toMatchObject({ drillMinNumber: 1, drillMaxNumber: 118 });
   });
 
-  it("clamps the drill limit", () => {
-    const saved = (n: number) => JSON.stringify({ schemaVersion: 1, data: { ...DEFAULT_SETTINGS, drillMaxNumber: n } });
-    expect(decodeSettings(saved(500)).drillMaxNumber).toBe(118);
-    expect(decodeSettings(saved(0)).drillMaxNumber).toBe(2);
+  it("loads settings saved with only a drill maximum", () => {
+    const saved = JSON.stringify({ schemaVersion: 1, data: { sessionSize: 20, cardKinds: ["symbol-to-name"], drillMaxNumber: 36 } });
+    expect(decodeSettings(saved)).toMatchObject({ drillMinNumber: 1, drillMaxNumber: 36 });
+  });
+
+  it.each([
+    [10, 15, 10, 15],
+    [15, 10, 10, 15],
+    [0, 500, 1, 118],
+    [7, 7, 7, 8],
+    [118, 118, 117, 118],
+  ])("repairs a drill range of %i–%i to %i–%i", (min, max, low, high) => {
+    const saved = JSON.stringify({ schemaVersion: 1, data: { ...DEFAULT_SETTINGS, drillMinNumber: min, drillMaxNumber: max } });
+    expect(decodeSettings(saved)).toMatchObject({ drillMinNumber: low, drillMaxNumber: high });
   });
 
   it("repairs invalid fields instead of failing", () => {
     expect(decodeSettings(JSON.stringify({ schemaVersion: 1, data: { sessionSize: 500, cardKinds: ["bogus"] } }))).toEqual({
       sessionSize: 50,
       cardKinds: DEFAULT_SETTINGS.cardKinds,
+      drillMinNumber: 1,
       drillMaxNumber: 118,
     });
     expect(decodeSettings(JSON.stringify("garbage"))).toEqual(DEFAULT_SETTINGS);
@@ -138,7 +149,7 @@ describe("settings codec", () => {
 describe("import and export", () => {
   it("exports a bundle that imports back identically", () => {
     const progress = sampleProgress();
-    const settings = { sessionSize: 10, cardKinds: ["symbol-to-name" as const], drillMaxNumber: 118 };
+    const settings = { sessionSize: 10, cardKinds: ["symbol-to-name" as const], drillMinNumber: 1, drillMaxNumber: 118 };
     const imported = parseImport(createExportBundle(progress, settings, T0));
     expect(imported).toEqual({ progress, settings, migratedFrom: null });
   });

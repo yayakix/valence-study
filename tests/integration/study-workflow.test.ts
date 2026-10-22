@@ -177,7 +177,7 @@ describe("progress workflows", () => {
     const h = createTestHarness();
     await h.progress.hydrate();
     const seeded = { ...progressWithMastered([1, 2], ["symbol-to-name"]), unlockedSectionIds: [1, 2] };
-    const bundle = createExportBundle(seeded, { sessionSize: 10, cardKinds: ["symbol-to-name"], drillMaxNumber: 118 }, T0);
+    const bundle = createExportBundle(seeded, { sessionSize: 10, cardKinds: ["symbol-to-name"], drillMinNumber: 1, drillMaxNumber: 118 }, T0);
 
     expect(await h.progress.importProgress(bundle)).toEqual({ ok: true, migratedFrom: null, cardsImported: 2 });
     expect(h.deps.settingsStore.getState().settings.sessionSize).toBe(10);

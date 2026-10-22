@@ -41,6 +41,7 @@ describe("settings store and normalization", () => {
   it("clamps session size and orders card kinds", () => {
     expect(normalizeSettings({ sessionSize: 2, cardKinds: ["number-to-element", "symbol-to-name"] })).toEqual({
       sessionSize: 5,
+      drillMinNumber: 1,
       drillMaxNumber: 118,
       cardKinds: ["symbol-to-name", "number-to-element"],
     });

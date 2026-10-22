@@ -13,7 +13,7 @@ Valence is a personal study app for learning all 118 elements with flashcards. Y
   - **Spaced review**: cards from your unlocked sections that are now due.
   - **Cumulative review**: draws evenly from every unlocked section, weakest cards first.
 - **Missed cards come back** three cards later in the same session, up to twice.
-- **Blank table**: the simplest way to study. Every square shows only its atomic number. Tap one to reveal its symbol and name, and tapping another hides the previous one. Escape or **Hide** clears it. Switch to **Number** mode to hide the table and guess from one big atomic number at a time, shuffled so every number comes up once before any repeats. You can limit it to numbers 1 through any maximum you choose, and that choice is saved.
+- **Blank table**: the simplest way to study. Every square shows only its atomic number. Tap one to reveal its symbol and name, and tapping another hides the previous one. Escape or **Hide** clears it. Switch to **Number** mode to hide the table and guess from one big atomic number at a time, shuffled so every number comes up once before any repeats. You can limit it to any range, such as 1 to 10 or 10 to 15, and that range is saved.
 - **Periodic table view**: color-coded by category. Locked sections are dimmed and mastered elements get a check mark. Tap an element to see its details and the status of each of its cards.
 - **Progress page**: accuracy, mastery for each section, a day streak, and session history. It also has settings, JSON export and import, and a reset button.
 - **Local persistence** with a versioned schema, validation, migrations, and recovery from corrupt data.

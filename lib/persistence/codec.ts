@@ -43,6 +43,7 @@ export function decodeSettingsValue(value: unknown): StudySettings {
     return normalizeSettings({
       sessionSize: typeof candidate.sessionSize === "number" ? candidate.sessionSize : undefined,
       cardKinds: Array.isArray(candidate.cardKinds) ? (candidate.cardKinds as StudySettings["cardKinds"]) : undefined,
+      drillMinNumber: typeof candidate.drillMinNumber === "number" ? candidate.drillMinNumber : undefined,
       drillMaxNumber: typeof candidate.drillMaxNumber === "number" ? candidate.drillMaxNumber : undefined,
     });
   }

@@ -10,7 +10,7 @@ import {
   type StudySession,
   type StudySettings,
 } from "@/domain/study/types";
-import { DRILL_MAX_LIMITS, SESSION_SIZE_LIMITS } from "@/domain/study/settings.service";
+import { DRILL_RANGE_LIMITS, SESSION_SIZE_LIMITS } from "@/domain/study/settings.service";
 
 export const CURRENT_PROGRESS_VERSION = 2;
 export const CURRENT_SETTINGS_VERSION = 1;
@@ -120,11 +120,16 @@ export type ProgressEnvelopeV2 = z.infer<typeof progressEnvelopeV2Schema>;
 
 export const versionProbeSchema = z.looseObject({ schemaVersion: z.number().int().positive() });
 
-export const settingsSchema: z.ZodType<StudySettings> = z.object({
+const drillBound = z.number().int().min(DRILL_RANGE_LIMITS.lowest).max(DRILL_RANGE_LIMITS.highest);
+
+export const settingsSchema: z.ZodType<StudySettings> = z
+  .object({
   sessionSize: z.number().int().min(SESSION_SIZE_LIMITS.min).max(SESSION_SIZE_LIMITS.max),
   cardKinds: z.array(z.enum(CARD_KINDS)).min(1),
-  drillMaxNumber: z.number().int().min(DRILL_MAX_LIMITS.min).max(DRILL_MAX_LIMITS.max).default(DRILL_MAX_LIMITS.max),
-});
+  drillMinNumber: drillBound.default(DRILL_RANGE_LIMITS.lowest),
+  drillMaxNumber: drillBound.default(DRILL_RANGE_LIMITS.highest),
+  })
+  .refine((s) => s.drillMinNumber < s.drillMaxNumber, "Drill range must contain at least two numbers");
 
 export const settingsEnvelopeSchema = z.object({
   schemaVersion: z.literal(CURRENT_SETTINGS_VERSION),

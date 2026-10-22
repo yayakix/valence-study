@@ -97,7 +97,8 @@ export interface ProgressRecord {
 
 export interface StudySettings {
   sessionSize: number;
-  /** Highest atomic number drawn in the blank-table number drill. */
+  /** Inclusive range of atomic numbers drawn in the blank-table number drill. */
+  drillMinNumber: number;
   drillMaxNumber: number;
   cardKinds: CardKind[];
 }
