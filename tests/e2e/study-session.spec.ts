@@ -93,4 +93,27 @@ test.describe("blank table", () => {
     await page.getByTestId("blank-79").click();
     await expect(page.getByTestId("revealed-name")).toHaveCount(0);
   });
+
+  test("number mode quizzes from the number alone and keeps its place across modes", async ({ page }) => {
+    await page.goto("/blank-table");
+    await page.getByRole("tab", { name: "Number" }).click();
+    await expect(page.getByRole("group", { name: "Blank periodic table" })).toHaveCount(0);
+    await expect(page.getByTestId("drill-position")).toHaveText("1 of 118");
+
+    const number = Number(await page.getByTestId("drill-number").textContent());
+    expect(number).toBeGreaterThanOrEqual(1);
+    expect(number).toBeLessThanOrEqual(118);
+    await expect(page.getByTestId("drill-answer")).toHaveCount(0);
+
+    await page.getByRole("button", { name: "Reveal" }).click();
+    await expect(page.getByTestId("drill-answer")).not.toBeEmpty();
+    await page.getByRole("button", { name: "Next number" }).click();
+    await expect(page.getByTestId("drill-position")).toHaveText("2 of 118");
+    await expect(page.getByTestId("drill-answer")).toHaveCount(0);
+
+    await page.getByRole("tab", { name: "Table" }).click();
+    await expect(page.getByTestId("blank-1")).toBeVisible();
+    await page.getByRole("tab", { name: "Number" }).click();
+    await expect(page.getByTestId("drill-position")).toHaveText("2 of 118");
+  });
 });

@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect } from "react";
-import { EyeOff } from "lucide-react";
+import { useEffect, useState } from "react";
+import { EyeOff, Grid3x3, Hash } from "lucide-react";
 import { PageHeader } from "@/components/common/page-header";
 import { CATEGORY_STYLES } from "@/components/periodic-table/category-styles";
 import { TableGrid } from "@/components/periodic-table/table-grid";
@@ -10,9 +10,60 @@ import { getCategory } from "@/data";
 import { formatAtomicMass } from "@/domain/elements/queries";
 import type { ChemicalElement } from "@/domain/elements/types";
 import { useBlankTable } from "@/hooks/useBlankTable";
+import { useNumberDrill } from "@/hooks/useNumberDrill";
+import { NumberMode } from "./number-mode";
 import { cn } from "@/lib/utils";
 
+type Mode = "table" | "number";
+
+const DESCRIPTIONS: Record<Mode, string> = {
+  table:
+    "Every square shows only its atomic number. Tap one to reveal the element, and tapping another hides the last one.",
+  number:
+    "Just the number, with no table to give its position away. Name the element, then reveal to check.",
+};
+
 export function BlankTableView() {
+  const [mode, setMode] = useState<Mode>("table");
+  const numberDrill = useNumberDrill();
+
+  const switchTo = (next: Mode) => {
+    if (next === "number") numberDrill.start();
+    setMode(next);
+  };
+
+  return (
+    <>
+      <PageHeader
+        title="Blank table"
+        description={DESCRIPTIONS[mode]}
+        actions={
+          <div role="tablist" aria-label="Practice mode" className="inline-flex rounded-lg bg-muted p-1">
+            {(["table", "number"] as const).map((option) => (
+              <button
+                key={option}
+                type="button"
+                role="tab"
+                aria-selected={mode === option}
+                onClick={() => switchTo(option)}
+                className={cn(
+                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors",
+                  mode === option && "bg-background text-foreground shadow-sm",
+                )}
+              >
+                {option === "table" ? <Grid3x3 className="size-4" /> : <Hash className="size-4" />}
+                {option === "table" ? "Table" : "Number"}
+              </button>
+            ))}
+          </div>
+        }
+      />
+      {mode === "table" ? <TableMode /> : <NumberMode drill={numberDrill} />}
+    </>
+  );
+}
+
+function TableMode() {
   const { elements, revealed, toggle, hide } = useBlankTable();
 
   useEffect(() => {
@@ -23,11 +74,6 @@ export function BlankTableView() {
 
   return (
     <>
-      <PageHeader
-        title="Blank table"
-        description="Every square shows only its atomic number. Tap one to reveal the element, and tapping another hides the last one."
-      />
-
       <RevealPanel element={revealed} onHide={hide} />
 
       <TableGrid label="Blank periodic table">
