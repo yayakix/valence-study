@@ -2,11 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Grid3x3, Home, Layers } from "lucide-react";
+import { BarChart3, Grid3x3, Hash, Home, Layers } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
   { href: "/", label: "Home", icon: Home },
+  { href: "/blank-table", label: "Blank table", icon: Hash },
   { href: "/study", label: "Study", icon: Layers },
   { href: "/periodic-table", label: "Table", icon: Grid3x3 },
   { href: "/progress", label: "Progress", icon: BarChart3 },
@@ -54,7 +55,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         aria-label="Main"
         className="fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden"
       >
-        <ul className="grid grid-cols-4">
+        <ul className="grid grid-cols-5">
           {NAV.map(({ href, label, icon: Icon }) => (
             <li key={href}>
               <Link

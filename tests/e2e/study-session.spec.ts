@@ -73,3 +73,24 @@ test.describe("periodic table", () => {
     await expect(dialog.getByText("Locked")).toBeVisible();
   });
 });
+
+test.describe("blank table", () => {
+  test("reveals one element at a time", async ({ page }) => {
+    await page.goto("/blank-table");
+    const table = page.getByRole("group", { name: "Blank periodic table" });
+    await expect(table.getByRole("button")).toHaveCount(118);
+    await expect(page.getByTestId("blank-26")).toHaveText("26");
+
+    await page.getByTestId("blank-26").click();
+    await expect(page.getByTestId("revealed-name")).toHaveText("Iron");
+    await expect(page.getByTestId("blank-26")).toHaveAttribute("aria-pressed", "true");
+
+    await page.getByTestId("blank-79").click();
+    await expect(page.getByTestId("revealed-name")).toHaveText("Gold");
+    await expect(page.getByTestId("blank-26")).toHaveAttribute("aria-pressed", "false");
+    await expect(page.getByTestId("blank-26")).toHaveText("26");
+
+    await page.getByTestId("blank-79").click();
+    await expect(page.getByTestId("revealed-name")).toHaveCount(0);
+  });
+});

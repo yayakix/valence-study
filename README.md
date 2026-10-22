@@ -13,6 +13,7 @@ Valence is a personal study app for learning all 118 elements with flashcards. Y
   - **Spaced review**: cards from your unlocked sections that are now due.
   - **Cumulative review**: draws evenly from every unlocked section, weakest cards first.
 - **Missed cards come back** three cards later in the same session, up to twice.
+- **Blank table**: the simplest way to study. Every square shows only its atomic number. Tap one to reveal its symbol and name, and tapping another hides the previous one. Escape or **Hide** clears it.
 - **Periodic table view**: color-coded by category. Locked sections are dimmed and mastered elements get a check mark. Tap an element to see its details and the status of each of its cards.
 - **Progress page**: accuracy, mastery for each section, a day streak, and session history. It also has settings, JSON export and import, and a reset button.
 - **Local persistence** with a versioned schema, validation, migrations, and recovery from corrupt data.
@@ -41,7 +42,7 @@ npm run dev          # http://127.0.0.1:4610
 Features follow **Data / Store → Hook → Service / Controller → View**:
 
 ```
-app/(study)/            Routes: / (dashboard), /study, /periodic-table, /progress
+app/(study)/            Routes: / (dashboard), /blank-table, /study, /periodic-table, /progress
 components/             Views only: dashboard/, flashcards/, periodic-table/, progress/, ui/ (shadcn)
 hooks/                  useStudySession, useStudyProgress, usePeriodicTable, useProgressData, useNow
 controllers/            Thin workflows: study.controller (sessions, rating), progress.controller
