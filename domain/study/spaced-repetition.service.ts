@@ -21,7 +21,7 @@ export function isSuccessfulRecall(rating: RecallRating): boolean {
   return rating !== "again";
 }
 
-export function createInitialCardState(cardId: CardId, now: number): CardReviewState {
+export function createInitialCardState<Id extends string = CardId>(cardId: Id, now: number): CardReviewState<Id> {
   return {
     cardId,
     easeFactor: SR_CONFIG.initialEase,
@@ -39,15 +39,15 @@ function round2(value: number): number {
 }
 
 /** Applies a recall rating using a lightly tuned SM-2 schedule. Pure: returns a new state. */
-export function scheduleReview(
-  previous: CardReviewState | undefined,
-  cardId: CardId,
+export function scheduleReview<Id extends string = CardId>(
+  previous: CardReviewState<Id> | undefined,
+  cardId: Id,
   rating: RecallRating,
   now: number,
-): CardReviewState {
+): CardReviewState<Id> {
   const prev = previous ?? createInitialCardState(cardId, now);
 
-  let next: Omit<CardReviewState, "history">;
+  let next: Omit<CardReviewState<Id>, "history">;
   if (rating === "again") {
     next = {
       cardId,
@@ -90,14 +90,14 @@ export function scheduleReview(
   return { ...next, history };
 }
 
-export function isDue(state: CardReviewState | undefined, now: number): boolean {
+export function isDue(state: CardReviewState<string> | undefined, now: number): boolean {
   return state !== undefined && state.lastReviewedAt !== null && state.dueAt <= now;
 }
 
 /** Time until the card would next be due for each possible rating. */
-export function previewIntervals(
-  state: CardReviewState | undefined,
-  cardId: CardId,
+export function previewIntervals<Id extends string = CardId>(
+  state: CardReviewState<Id> | undefined,
+  cardId: Id,
   now: number,
 ): Record<RecallRating, number> {
   const preview = (rating: RecallRating) => scheduleReview(state, cardId, rating, now).dueAt - now;

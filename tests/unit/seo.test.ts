@@ -3,6 +3,7 @@ import robots from "@/app/robots";
 import sitemap from "@/app/sitemap";
 import { describeElement, symbolOrigin } from "@/components/elements/element-copy";
 import { ELEMENTS } from "@/data";
+import { DECKS } from "@/data/decks";
 import { elementSlug, findElementBySlug } from "@/domain/elements/queries";
 
 const bySymbol = (symbol: string) => ELEMENTS.find((e) => e.symbol === symbol)!;
@@ -47,7 +48,7 @@ describe("element copy", () => {
 describe("crawler files", () => {
   it("lists the main pages and every element page in the sitemap", () => {
     const urls = sitemap().map((entry) => entry.url);
-    expect(urls).toHaveLength(4 + ELEMENTS.length);
+    expect(urls).toHaveLength(5 + DECKS.length + ELEMENTS.length);
     expect(urls.some((url) => url.endsWith("/elements/hydrogen"))).toBe(true);
     expect(urls.some((url) => url.endsWith("/periodic-table"))).toBe(true);
   });

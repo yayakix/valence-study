@@ -1,5 +1,13 @@
+import type { DeckProgress } from "@/domain/decks/types";
 import type { ProgressRecord, StudySettings } from "@/domain/study/types";
-import { decodeProgress, decodeSettings, encodeProgress, encodeSettings } from "./codec";
+import {
+  decodeDeckProgress,
+  decodeProgress,
+  decodeSettings,
+  encodeDeckProgress,
+  encodeProgress,
+  encodeSettings,
+} from "./codec";
 import { PersistenceError } from "./migrations";
 import type { LoadResult, StudyRepository } from "./repository";
 
@@ -17,6 +25,7 @@ export function storageKeys(profile = "default") {
   return {
     progress: `${prefix}:progress`,
     settings: `${prefix}:settings`,
+    deck: (deckId: string) => `${prefix}:deck:${deckId}`,
     backup: (kind: string, at: number) => `${prefix}:${kind}:corrupt-${at}`,
   };
 }
@@ -71,6 +80,18 @@ export function createLocalStorageRepository(
     },
     async saveSettings(settings) {
       storage.setItem(keys.settings, encodeSettings(settings));
+    },
+    async loadDeckProgress(deckId) {
+      return load<DeckProgress>(keys.deck(deckId), `deck-${deckId}`, (raw) => ({
+        value: decodeDeckProgress(raw),
+        migratedFrom: null,
+      }));
+    },
+    async saveDeckProgress(deckId, progress) {
+      storage.setItem(keys.deck(deckId), encodeDeckProgress(progress));
+    },
+    async clearDeckProgress(deckId) {
+      storage.removeItem(keys.deck(deckId));
     },
     async clear() {
       storage.removeItem(keys.progress);

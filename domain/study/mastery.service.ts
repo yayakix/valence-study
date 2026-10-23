@@ -10,14 +10,14 @@ import type {
   StudyCatalog,
 } from "./types";
 
-export function cardMasteryLevel(state: CardReviewState | undefined, masteryStreak: number): MasteryLevel {
+export function cardMasteryLevel(state: CardReviewState<string> | undefined, masteryStreak: number): MasteryLevel {
   if (!state || state.history.length === 0) return "new";
   return state.repetitions >= masteryStreak ? "mastered" : "learning";
 }
 
-export function summarizeMastery(
-  cardIds: readonly CardId[],
-  cards: ProgressRecord["cards"],
+export function summarizeMastery<Id extends string = CardId>(
+  cardIds: readonly Id[],
+  cards: Partial<Record<Id, CardReviewState<Id>>>,
   masteryStreak: number,
 ): MasterySummary {
   let mastered = 0;

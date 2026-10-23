@@ -86,13 +86,13 @@ export function countDueCards(
   ).length;
 }
 
-export function createSession(params: {
+export function createSession<Id extends string = CardId, Mode extends string = SessionMode>(params: {
   id: string;
-  mode: SessionMode;
+  mode: Mode;
   sectionId: number | null;
-  queue: readonly CardId[];
+  queue: readonly Id[];
   now: number;
-}): StudySession {
+}): StudySession<Id, Mode> {
   if (params.queue.length === 0) throw new Error("Cannot start a session with no cards");
   return {
     id: params.id,
@@ -109,17 +109,21 @@ export function createSession(params: {
   };
 }
 
-export function currentCardId(session: StudySession): CardId | null {
+export function currentCardId<Id extends string>(session: StudySession<Id, string>): Id | null {
   if (session.completedAt !== null) return null;
   return session.queue[session.position] ?? null;
 }
 
-export function revealCurrentCard(session: StudySession): StudySession {
+export function revealCurrentCard<S extends StudySession<string, string>>(session: S): S {
   if (session.completedAt !== null || session.revealed) return session;
   return { ...session, revealed: true };
 }
 
-export function answerCurrentCard(session: StudySession, rating: RecallRating, now: number): StudySession {
+export function answerCurrentCard<Id extends string, Mode extends string>(
+  session: StudySession<Id, Mode>,
+  rating: RecallRating,
+  now: number,
+): StudySession<Id, Mode> {
   const cardId = currentCardId(session);
   if (!cardId) throw new Error("Session has no current card");
 
@@ -144,18 +148,18 @@ export function answerCurrentCard(session: StudySession, rating: RecallRating, n
   };
 }
 
-export function sessionProgress(session: StudySession): { completed: number; total: number; ratio: number } {
+export function sessionProgress(session: StudySession<string, string>): { completed: number; total: number; ratio: number } {
   const total = session.queue.length;
   const completed = Math.min(session.position, total);
   return { completed, total, ratio: total === 0 ? 1 : completed / total };
 }
 
-export function recordUnlocks(session: StudySession, sectionIds: readonly number[]): StudySession {
+export function recordUnlocks<S extends StudySession<string, string>>(session: S, sectionIds: readonly number[]): S {
   if (sectionIds.length === 0) return session;
   return { ...session, unlockedDuringSession: [...new Set([...session.unlockedDuringSession, ...sectionIds])] };
 }
 
-export function summarizeSession(session: StudySession): SessionSummary {
+export function summarizeSession<Mode extends string>(session: StudySession<string, Mode>): SessionSummary<Mode> {
   const ratings = countRatings(session.answers.map((answer) => answer.rating));
   const totalAnswers = session.answers.length;
   return {

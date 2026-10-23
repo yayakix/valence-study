@@ -1,3 +1,4 @@
+import type { DeckProgress } from "@/domain/decks/types";
 import type { ProgressRecord, StudySettings } from "@/domain/study/types";
 
 export type LoadResult<T> =
@@ -15,5 +16,8 @@ export interface StudyRepository {
   saveProgress(progress: ProgressRecord): Promise<void>;
   loadSettings(): Promise<LoadResult<StudySettings>>;
   saveSettings(settings: StudySettings): Promise<void>;
+  loadDeckProgress(deckId: string): Promise<LoadResult<DeckProgress>>;
+  saveDeckProgress(deckId: string, progress: DeckProgress): Promise<void>;
+  clearDeckProgress(deckId: string): Promise<void>;
   clear(): Promise<void>;
 }

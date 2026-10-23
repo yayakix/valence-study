@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, Grid3x3, Hash, LayoutDashboard, Layers } from "lucide-react";
+import { BarChart3, Grid3x3, Hash, LayoutDashboard, Layers, Library } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const NAV = [
@@ -10,6 +10,7 @@ const NAV = [
   { href: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/study", label: "Study", icon: Layers },
   { href: "/periodic-table", label: "Table", icon: Grid3x3 },
+  { href: "/topics", label: "Topics", icon: Library },
   { href: "/progress", label: "Progress", icon: BarChart3 },
 ] as const;
 
@@ -37,12 +38,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 href={href}
                 aria-current={isActive(pathname, href) ? "page" : undefined}
                 className={cn(
-                  "flex items-center gap-2 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
+                  "flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground",
                   isActive(pathname, href) && "bg-accent text-foreground",
                 )}
               >
                 <Icon className="size-4" />
-                {label}
+                <span className="max-md:sr-only">{label}</span>
               </Link>
             ))}
           </nav>
@@ -57,7 +58,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         aria-label="Main"
         className="fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 pb-[env(safe-area-inset-bottom)] backdrop-blur sm:hidden"
       >
-        <ul className="grid grid-cols-5">
+        <ul className="grid grid-cols-6">
           {NAV.map(({ href, label, icon: Icon }) => (
             <li key={href}>
               <Link

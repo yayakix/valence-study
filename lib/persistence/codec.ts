@@ -1,5 +1,7 @@
+import type { DeckProgress } from "@/domain/decks/types";
 import type { ProgressRecord, StudySettings } from "@/domain/study/types";
 import { DEFAULT_SETTINGS, normalizeSettings } from "@/domain/study/settings.service";
+import { CURRENT_DECK_PROGRESS_VERSION, deckProgressEnvelopeSchema } from "./deck-schema";
 import { migrateProgressEnvelope, PersistenceError, type MigrationResult } from "./migrations";
 import {
   CURRENT_PROGRESS_VERSION,
@@ -24,6 +26,21 @@ export function encodeProgress(progress: ProgressRecord): string {
 
 export function decodeProgress(raw: string): MigrationResult {
   return migrateProgressEnvelope(parseJson(raw));
+}
+
+export function encodeDeckProgress(progress: DeckProgress): string {
+  return JSON.stringify({ schemaVersion: CURRENT_DECK_PROGRESS_VERSION, data: progress });
+}
+
+export function decodeDeckProgress(raw: string): DeckProgress {
+  const json = parseJson(raw);
+  const version = typeof json === "object" && json !== null ? (json as { schemaVersion?: unknown }).schemaVersion : undefined;
+  if (typeof version === "number" && version > CURRENT_DECK_PROGRESS_VERSION) {
+    throw new PersistenceError(`Topic progress version ${version} is newer than this app supports`, "unsupported-version");
+  }
+  const parsed = deckProgressEnvelopeSchema.safeParse(json);
+  if (!parsed.success) throw new PersistenceError("Topic progress is not in a recognized format", "invalid-data");
+  return parsed.data.data;
 }
 
 export function encodeSettings(settings: StudySettings): string {

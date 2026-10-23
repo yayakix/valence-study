@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { ELEMENTS } from "@/data";
+import { DECKS } from "@/data/decks";
 import { elementSlug } from "@/domain/elements/queries";
 import { absoluteUrl } from "@/lib/site";
 
@@ -8,11 +9,17 @@ const PAGES: { path: string; priority: number }[] = [
   { path: "/periodic-table", priority: 0.9 },
   { path: "/study", priority: 0.8 },
   { path: "/elements", priority: 0.8 },
+  { path: "/topics", priority: 0.8 },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   return [
     ...PAGES.map(({ path, priority }) => ({ url: absoluteUrl(path), changeFrequency: "monthly" as const, priority })),
+    ...DECKS.map((deck) => ({
+      url: absoluteUrl(`/topics/${deck.id}`),
+      changeFrequency: "monthly" as const,
+      priority: 0.8,
+    })),
     ...ELEMENTS.map((element) => ({
       url: absoluteUrl(`/elements/${elementSlug(element)}`),
       changeFrequency: "yearly" as const,

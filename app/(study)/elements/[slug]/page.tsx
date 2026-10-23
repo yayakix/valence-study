@@ -2,6 +2,8 @@ import { ArrowLeft, ArrowRight } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
+import { LoadingState } from "@/components/common/loading-state";
 import { describeElement, formatPhase, symbolOrigin } from "@/components/elements/element-copy";
 import { CATEGORY_STYLES } from "@/components/periodic-table/category-styles";
 import { JsonLd } from "@/components/seo/json-ld";
@@ -57,7 +59,15 @@ function ElementLink({ element, direction }: { element: ChemicalElement; directi
   );
 }
 
-export default async function ElementPage({ params }: PageProps<"/elements/[slug]">) {
+export default function ElementPage({ params }: PageProps<"/elements/[slug]">) {
+  return (
+    <Suspense fallback={<LoadingState label="Loading element…" />}>
+      <ElementContent params={params} />
+    </Suspense>
+  );
+}
+
+async function ElementContent({ params }: { params: PageProps<"/elements/[slug]">["params"] }) {
   const element = await resolveElement(params);
   const category = getCategory(element.category);
   const section = DEFAULT_CATALOG.sectionOf(element.atomicNumber);

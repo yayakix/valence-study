@@ -27,8 +27,8 @@ export interface ReviewLogEntry {
   intervalDays: number;
 }
 
-export interface CardReviewState {
-  cardId: CardId;
+export interface CardReviewState<Id extends string = CardId> {
+  cardId: Id;
   easeFactor: number;
   intervalDays: number;
   /** Consecutive successful recalls; reset by "again". */
@@ -51,21 +51,21 @@ export interface Section {
 export const SESSION_MODES = ["learn", "review", "cumulative"] as const;
 export type SessionMode = (typeof SESSION_MODES)[number];
 
-export interface SessionAnswer {
-  cardId: CardId;
+export interface SessionAnswer<Id extends string = CardId> {
+  cardId: Id;
   rating: RecallRating;
   answeredAt: number;
 }
 
-export interface StudySession {
+export interface StudySession<Id extends string = CardId, Mode extends string = SessionMode> {
   id: string;
-  mode: SessionMode;
+  mode: Mode;
   sectionId: number | null;
-  queue: CardId[];
+  queue: Id[];
   position: number;
   revealed: boolean;
-  answers: SessionAnswer[];
-  requeueCounts: Partial<Record<CardId, number>>;
+  answers: SessionAnswer<Id>[];
+  requeueCounts: Partial<Record<Id, number>>;
   unlockedDuringSession: number[];
   startedAt: number;
   completedAt: number | null;
@@ -73,9 +73,9 @@ export interface StudySession {
 
 export type RatingCounts = Record<RecallRating, number>;
 
-export interface SessionSummary {
+export interface SessionSummary<Mode extends string = SessionMode> {
   id: string;
-  mode: SessionMode;
+  mode: Mode;
   sectionId: number | null;
   startedAt: number;
   completedAt: number;
