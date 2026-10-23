@@ -40,11 +40,11 @@ export default function OpenGraphImage() {
           >
             Va
           </div>
-          <div style={{ fontSize: 40, fontWeight: 700 }}>{SITE.name}</div>
+          <div style={{ display: "flex", fontSize: 40, fontWeight: 700 }}>{SITE.name}</div>
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          <div style={{ fontSize: 72, fontWeight: 800, lineHeight: 1.05 }}>Learn the periodic table</div>
-          <div style={{ fontSize: 32, color: "#475569" }}>
+          <div style={{ display: "flex", fontSize: 72, fontWeight: 800, lineHeight: 1.05 }}>Learn the periodic table</div>
+          <div style={{ display: "flex", fontSize: 32, color: "#475569" }}>
             Flashcards, spaced repetition, and a blank-table quiz for all 118 elements.
           </div>
         </div>
@@ -64,8 +64,8 @@ export default function OpenGraphImage() {
                 background: "white",
               }}
             >
-              <div style={{ fontSize: 16, color: "#64748b" }}>{element.atomicNumber}</div>
-              <div style={{ fontSize: 38, fontWeight: 700 }}>{element.symbol}</div>
+              <div style={{ display: "flex", fontSize: 16, color: "#64748b" }}>{element.atomicNumber}</div>
+              <div style={{ display: "flex", fontSize: 38, fontWeight: 700 }}>{element.symbol}</div>
             </div>
           ))}
         </div>
