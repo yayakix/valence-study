@@ -1,11 +1,12 @@
 "use client";
 
-import { Lock } from "lucide-react";
+import { ArrowRight, Lock } from "lucide-react";
+import Link from "next/link";
 import { CARD_KIND_LABELS, MASTERY_LABELS } from "@/components/flashcards/labels";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { getCategory } from "@/data";
-import { formatAtomicMass } from "@/domain/elements/queries";
+import { elementSlug, formatAtomicMass } from "@/domain/elements/queries";
 import type { ElementDetail } from "@/hooks/usePeriodicTable";
 import { cn } from "@/lib/utils";
 import { CATEGORY_STYLES } from "./category-styles";
@@ -91,6 +92,12 @@ function DetailBody({ detail }: { detail: ElementDetail }) {
           ))}
         </ul>
       </div>
+      <Link
+        href={`/elements/${elementSlug(element)}`}
+        className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+      >
+        More about {element.name.toLowerCase()} <ArrowRight className="size-3.5" aria-hidden />
+      </Link>
     </>
   );
 }

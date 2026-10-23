@@ -49,7 +49,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-6xl flex-1 px-4 pt-6 pb-28 sm:px-6 sm:pb-12">{children}</main>
+      <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col px-4 pt-4 pb-[calc(5rem+env(safe-area-inset-bottom))] sm:px-6 sm:pt-6 sm:pb-12">
+        {children}
+      </main>
 
       <nav
         aria-label="Main"

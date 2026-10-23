@@ -1,6 +1,6 @@
 "use client";
 
-import { LoadingState } from "@/components/common/loading-state";
+import Link from "next/link";
 import { PageHeader } from "@/components/common/page-header";
 import { CATEGORIES } from "@/data";
 import { usePeriodicTable } from "@/hooks/usePeriodicTable";
@@ -13,8 +13,6 @@ import { TableGrid } from "./table-grid";
 export function PeriodicTableView() {
   const { ready, cells, selected, select, categoryFilter, setCategoryFilter } = usePeriodicTable();
 
-  if (!ready) return <LoadingState label="Loading the periodic table…" />;
-
   const unlockedCount = cells.filter((c) => c.unlocked).length;
   const masteredCount = cells.filter((c) => c.level === "mastered").length;
 
@@ -22,7 +20,18 @@ export function PeriodicTableView() {
     <>
       <PageHeader
         title="Periodic table"
-        description={`${unlockedCount} of ${cells.length} elements unlocked, ${masteredCount} fully mastered. Tap any element for details.`}
+        description={
+          <>
+            {ready
+              ? `${unlockedCount} of ${cells.length} elements unlocked, ${masteredCount} fully mastered. `
+              : "All 118 elements, color-coded by category. "}
+            Tap any element for details, or{" "}
+            <Link href="/elements" className="text-primary hover:underline">
+              browse the full list
+            </Link>
+            .
+          </>
+        }
       />
 
       <TableGrid label="Periodic table of elements">

@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { EyeOff, Grid3x3, Hash } from "lucide-react";
-import { PageHeader } from "@/components/common/page-header";
 import { CATEGORY_STYLES } from "@/components/periodic-table/category-styles";
 import { TableGrid } from "@/components/periodic-table/table-grid";
 import { Button } from "@/components/ui/button";
@@ -33,12 +32,11 @@ export function BlankTableView() {
   };
 
   return (
-    <>
-      <PageHeader
-        title="Blank table"
-        description={DESCRIPTIONS[mode]}
-        actions={
-          <div role="tablist" aria-label="Practice mode" className="inline-flex rounded-lg bg-muted p-1">
+    <div className="flex flex-1 flex-col">
+      <div className="mb-3 sm:mb-6">
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Blank table</h1>
+          <div role="tablist" aria-label="Practice mode" className="inline-flex shrink-0 rounded-lg bg-muted p-1">
             {(["table", "number"] as const).map((option) => (
               <button
                 key={option}
@@ -47,7 +45,7 @@ export function BlankTableView() {
                 aria-selected={mode === option}
                 onClick={() => switchTo(option)}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors",
+                  "flex touch-manipulation items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors",
                   mode === option && "bg-background text-foreground shadow-sm",
                 )}
               >
@@ -56,10 +54,18 @@ export function BlankTableView() {
               </button>
             ))}
           </div>
-        }
-      />
+        </div>
+        <p
+          className={cn(
+            "mt-1 max-w-2xl text-sm text-muted-foreground sm:text-base",
+            mode === "number" && "hidden sm:block",
+          )}
+        >
+          {DESCRIPTIONS[mode]}
+        </p>
+      </div>
       {mode === "table" ? <TableMode /> : <NumberMode drill={numberDrill} />}
-    </>
+    </div>
   );
 }
 

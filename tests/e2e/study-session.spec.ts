@@ -117,9 +117,25 @@ test.describe("blank table", () => {
     await expect(page.getByTestId("drill-position")).toHaveText("2 of 118");
   });
 
+  test("number mode fits the screen and advances by tapping the card", async ({ page }) => {
+    await page.goto("/blank-table");
+    await page.getByRole("tab", { name: "Number" }).click();
+    await expect(page.getByTestId("drill-number")).toBeVisible();
+
+    const overflow = await page.evaluate(() => document.documentElement.scrollHeight - window.innerHeight);
+    expect(overflow).toBeLessThanOrEqual(1);
+    await expect(page.getByRole("button", { name: "Reveal" })).toBeInViewport();
+
+    await page.getByTestId("drill-card").click();
+    await expect(page.getByTestId("drill-answer")).toBeVisible();
+    await page.getByTestId("drill-card").click();
+    await expect(page.getByTestId("drill-position")).toHaveText("2 of 118");
+  });
+
   test("number mode can be limited to a range of atomic numbers, and remembers it", async ({ page }) => {
     await page.goto("/blank-table");
     await page.getByRole("tab", { name: "Number" }).click();
+    await page.getByRole("button", { name: /Change range/ }).click();
     const from = page.getByLabel("Lowest atomic number to practice");
     const to = page.getByLabel("Highest atomic number to practice");
     await from.fill("10");
@@ -138,6 +154,8 @@ test.describe("blank table", () => {
 
     await page.reload();
     await page.getByRole("tab", { name: "Number" }).click();
+    await expect(page.getByRole("button", { name: /Change range/ })).toContainText("10–15");
+    await page.getByRole("button", { name: /Change range/ }).click();
     await expect(from).toHaveValue("10");
     await expect(to).toHaveValue("15");
 

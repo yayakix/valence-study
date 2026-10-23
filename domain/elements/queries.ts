@@ -22,6 +22,19 @@ export function findElement(
   );
 }
 
+/** URL slug for an element page, e.g. "iron". */
+export function elementSlug(element: ChemicalElement): string {
+  return element.name.toLowerCase();
+}
+
+export function findElementBySlug(
+  elements: readonly ChemicalElement[],
+  slug: string,
+): ChemicalElement | undefined {
+  const needle = slug.toLowerCase();
+  return elements.find((element) => elementSlug(element) === needle);
+}
+
 export function filterByCategory(
   elements: readonly ChemicalElement[],
   category: ElementCategory,
