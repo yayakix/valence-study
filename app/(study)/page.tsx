@@ -1,7 +1,15 @@
+import type { Metadata } from "next";
+import { BlankTableView } from "@/components/blank-table/blank-table-view";
 import { AboutSection } from "@/components/dashboard/about-section";
-import { DashboardView } from "@/components/dashboard/dashboard-view";
 import { JsonLd } from "@/components/seo/json-ld";
 import { SITE, SITE_URL } from "@/lib/site";
+
+export const metadata: Metadata = {
+  title: { absolute: "Blank Periodic Table Quiz & Flashcards · Valence" },
+  description:
+    "Free blank periodic table quiz. Tap any atomic number to reveal the element, drill random numbers in a range you choose, and learn all 118 elements with spaced-repetition flashcards.",
+  alternates: { canonical: "/" },
+};
 
 export default function HomePage() {
   return (
@@ -21,10 +29,7 @@ export default function HomePage() {
           offers: { "@type": "Offer", price: "0", priceCurrency: "USD" },
         }}
       />
-      <h1 className="mb-4 text-sm font-medium text-muted-foreground">
-        Learn the periodic table: flashcards, spaced repetition, and a blank-table quiz
-      </h1>
-      <DashboardView />
+      <BlankTableView />
       <AboutSection />
     </>
   );

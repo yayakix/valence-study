@@ -42,7 +42,7 @@ npm run dev          # http://127.0.0.1:4610
 Features follow **Data / Store → Hook → Service / Controller → View**:
 
 ```
-app/(study)/            Routes: / (dashboard), /blank-table, /study, /periodic-table, /progress
+app/(study)/            Routes: / (blank table), /dashboard, /study, /periodic-table, /elements, /progress
 components/             Views only: dashboard/, flashcards/, periodic-table/, progress/, ui/ (shadcn)
 hooks/                  useStudySession, useStudyProgress, usePeriodicTable, useProgressData, useNow
 controllers/            Thin workflows: study.controller (sessions, rating), progress.controller

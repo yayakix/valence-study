@@ -73,8 +73,8 @@ export function SessionComplete({ summary, onDismiss }: { summary: SessionSummar
             </Button>
           </div>
           <div className="text-center">
-            <Button variant="link" nativeButton={false} render={<Link href="/" />}>
-              Back to home
+            <Button variant="link" nativeButton={false} render={<Link href="/dashboard" />}>
+              Back to dashboard
             </Button>
           </div>
         </CardContent>

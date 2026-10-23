@@ -47,9 +47,9 @@ describe("element copy", () => {
 describe("crawler files", () => {
   it("lists the main pages and every element page in the sitemap", () => {
     const urls = sitemap().map((entry) => entry.url);
-    expect(urls).toHaveLength(5 + ELEMENTS.length);
+    expect(urls).toHaveLength(4 + ELEMENTS.length);
     expect(urls.some((url) => url.endsWith("/elements/hydrogen"))).toBe(true);
-    expect(urls.some((url) => url.endsWith("/blank-table"))).toBe(true);
+    expect(urls.some((url) => url.endsWith("/periodic-table"))).toBe(true);
   });
 
   it("points crawlers at the sitemap and keeps personal progress out", () => {

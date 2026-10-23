@@ -22,8 +22,8 @@ const FEATURES = [
   {
     title: "Blank periodic table quiz",
     body: "Test yourself on an empty table that shows only atomic numbers, or drill a big number on its own so you learn the number, not just the position.",
-    href: "/blank-table",
-    link: "Try the blank table",
+    href: "/dashboard",
+    link: "Track your progress",
   },
 ];
 

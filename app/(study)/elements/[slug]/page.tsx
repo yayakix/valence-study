@@ -169,7 +169,7 @@ export default async function ElementPage({ params }: PageProps<"/elements/[slug
           <Button nativeButton={false} render={<Link href="/study" />}>
             Study with flashcards
           </Button>
-          <Button variant="outline" nativeButton={false} render={<Link href="/blank-table" />}>
+          <Button variant="outline" nativeButton={false} render={<Link href="/" />}>
             Blank periodic table quiz
           </Button>
         </div>

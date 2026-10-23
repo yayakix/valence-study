@@ -5,7 +5,6 @@ import { absoluteUrl } from "@/lib/site";
 
 const PAGES: { path: string; priority: number }[] = [
   { path: "/", priority: 1 },
-  { path: "/blank-table", priority: 0.9 },
   { path: "/periodic-table", priority: 0.9 },
   { path: "/study", priority: 0.8 },
   { path: "/elements", priority: 0.8 },

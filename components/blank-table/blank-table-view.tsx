@@ -35,7 +35,9 @@ export function BlankTableView() {
     <div className="flex flex-1 flex-col">
       <div className="mb-3 sm:mb-6">
         <div className="flex items-center justify-between gap-3">
-          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">Blank table</h1>
+          <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+            Blank <span className="hidden sm:inline">periodic </span>table
+          </h1>
           <div role="tablist" aria-label="Practice mode" className="inline-flex shrink-0 rounded-lg bg-muted p-1">
             {(["table", "number"] as const).map((option) => (
               <button

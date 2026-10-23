@@ -8,7 +8,7 @@ async function answerCard(page: Page, rating: "Again" | "Hard" | "Good" | "Easy"
 
 test.describe("study session", () => {
   test("completes a full learning session and keeps progress after reload", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/dashboard");
     await expect(page.getByRole("heading", { name: "Hydrogen to Neon" })).toBeVisible();
     await page.getByRole("button", { name: "Start learning" }).click();
 
@@ -33,7 +33,7 @@ test.describe("study session", () => {
     await page.reload();
     await expect(page.getByTestId("session-history").getByRole("listitem")).toHaveCount(1);
 
-    await page.goto("/");
+    await page.goto("/dashboard");
     await expect(page.getByRole("button", { name: "Continue learning" })).toBeVisible();
     await expect(page.getByTestId("section-2")).toHaveAttribute("data-unlocked", "false");
   });
@@ -50,7 +50,7 @@ test.describe("study session", () => {
   });
 
   test("resumes an unfinished session after a reload", async ({ page }) => {
-    await page.goto("/");
+    await page.goto("/dashboard");
     await page.getByRole("button", { name: "Start learning" }).click();
     await answerCard(page, "Good");
     await answerCard(page, "Easy");
@@ -76,7 +76,7 @@ test.describe("periodic table", () => {
 
 test.describe("blank table", () => {
   test("reveals one element at a time", async ({ page }) => {
-    await page.goto("/blank-table");
+    await page.goto("/");
     const table = page.getByRole("group", { name: "Blank periodic table" });
     await expect(table.getByRole("button")).toHaveCount(118);
     await expect(page.getByTestId("blank-26")).toHaveText("26");
@@ -95,7 +95,7 @@ test.describe("blank table", () => {
   });
 
   test("number mode quizzes from the number alone and keeps its place across modes", async ({ page }) => {
-    await page.goto("/blank-table");
+    await page.goto("/");
     await page.getByRole("tab", { name: "Number" }).click();
     await expect(page.getByRole("group", { name: "Blank periodic table" })).toHaveCount(0);
     await expect(page.getByTestId("drill-position")).toHaveText("1 of 118");
@@ -118,7 +118,7 @@ test.describe("blank table", () => {
   });
 
   test("number mode fits the screen and advances by tapping the card", async ({ page }) => {
-    await page.goto("/blank-table");
+    await page.goto("/");
     await page.getByRole("tab", { name: "Number" }).click();
     await expect(page.getByTestId("drill-number")).toBeVisible();
 
@@ -133,7 +133,7 @@ test.describe("blank table", () => {
   });
 
   test("number mode can be limited to a range of atomic numbers, and remembers it", async ({ page }) => {
-    await page.goto("/blank-table");
+    await page.goto("/");
     await page.getByRole("tab", { name: "Number" }).click();
     await page.getByRole("button", { name: /Change range/ }).click();
     const from = page.getByLabel("Lowest atomic number to practice");
